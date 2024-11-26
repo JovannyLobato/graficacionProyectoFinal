@@ -4,6 +4,7 @@ from OpenGL.GL import *
 from OpenGL.GLU import *
 import random
 
+#Pueden usar este metodo para cargar las texturas que quieran (llaman al metodo antes del ciclo principal)
 def cargar_textura(ruta):
     # Carga la imagen de la textura
     imagen = pygame.image.load(ruta)
@@ -94,7 +95,7 @@ def draw_pino(textura1,textura2):
 # Configuración inicial
 pygame.init()
 screen = pygame.display.set_mode((800, 600), DOUBLEBUF | OPENGL)
-pygame.display.set_caption("Dibujo de un Cono con Pygame y PyOpenGL")
+pygame.display.set_caption("Proyecto Final, Escena navidenia")
 
 # Configuración de OpenGL
 glEnable(GL_DEPTH_TEST)
@@ -102,7 +103,7 @@ glClearColor(0.1, 0.1, 0.1, 1)
 gluPerspective(45, (800 / 600), 0.1, 50.0)
 glTranslatef(0.0, 0.0, -5)
 
-#cargar textura
+#Aqui ponen la textura
 texturaHojas = cargar_textura('D:\graficacion\proyecto final\hojas.jpg')
 texturaTronco = cargar_textura('D:\graficacion\proyecto final\madera.png')
 
