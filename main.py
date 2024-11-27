@@ -4,7 +4,7 @@ Se cierra con la letra p
 la camara se maneja con w, a, s, d
 """
 
-from cube import *
+from Cube import *
 import pygame
 from pygame.locals import *
 from OpenGL.GL import *
