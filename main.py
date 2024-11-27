@@ -8,6 +8,11 @@ import math
 
 #const de colores
 cwall = (0.8,0.9,0.6)
+cfloor = (0.1,0.4,0.4)
+ct = (0.1,0.1,0.1)
+cm = (0.2,0.1,0.1)
+
+
 # Configuración inicial
 # Inicializar Pygame y OpenGL
 pygame.init()
@@ -31,7 +36,7 @@ configurarVista()
 angulo_horizontal = 0.0
 angulo_vertical = 0.0  
 #distancia al origen (radio de la orbita)
-radio = 10.0  
+radio = 5.0  
 # velocidad de rotación
 speed = 2.0  
 # velocidad de zoom con E y Q
@@ -166,12 +171,56 @@ def cubo(cf,cr,cb,cd,ci,cu, w, h, d):
 # aca se dibuja la casita y otras cosas
 def dibujarCasita():
 
+    #pared izquierda
     glPushMatrix()
-    glTranslatef(-3,1,0)
-    cubo(cwall,cwall,cwall,cwall,cwall,cwall,
-        0.4,4,4)
+    glTranslatef(-8,-1,0)
+    cubo(cwall,cwall,cwall,cwall,cwall,cwall,0.4,1.5,6)
+    glPopMatrix()
+    glPushMatrix()
+    glTranslatef(-8,3.2,3)
+    cubo(cwall,cwall,cwall,cwall,cwall,cwall,0.4,2.8,3)
+    glPopMatrix()
+    glPushMatrix()
+    glTranslatef(-8,3.2,-5)
+    cubo(cwall,cwall,cwall,cwall,cwall,cwall,0.4,2.8,1)
+    glPopMatrix()
+    
+    glPushMatrix()
+    glTranslatef(-8,5.6,-2)
+    cubo(cwall,cwall,cwall,cwall,cwall,cwall,0.4,0.4,2)
+    glPopMatrix()
+    
+    
+    #pared back
+    glPushMatrix()
+    glTranslatef(0,2,-6)
+    cubo(cwall,cwall,cwall,cwall,cwall,cwall,8,4,0.4)
+    glPopMatrix()
+    #right wall
+
+    glPushMatrix()
+    glTranslatef(8,2,0)
+    cubo(cwall,cwall,cwall,cwall,cwall,cwall,0.4,4,6)
+    glPopMatrix()
+    
+    #front wall
+    glPushMatrix()
+    glTranslatef(0,2,6)
+    cubo(cwall,cwall,cwall,cwall,cwall,cwall,8,4,0.4)
+    glPopMatrix()
+    # floor
+    glPushMatrix()
+    glTranslatef(0,-2,0)
+    cubo(cfloor,cfloor,cfloor,cfloor,cfloor,cfloor,8,0.4,6)
     glPopMatrix()
 
+    #techo
+    glPushMatrix()
+    glTranslatef(0,6,0)
+    cubo(ct,ct,ct,ct,ct,ct,8,0.4,6)
+    glPopMatrix()
+
+    
 #Pueden usar este metodo para cargar las texturas que quieran (llaman al metodo antes del ciclo principal)
 def cargar_textura(ruta):
     # Carga la imagen de la textura
