@@ -91,6 +91,90 @@ def draw_pino(textura1,textura2):
 
         nEsferas-=1
 
+    vi_x=-0.85
+    vi_y=-1
+
+    es_x=vi_x
+    es_y=vi_y
+
+    nEsferas=6
+    for i in range(4):
+        for j in range(nEsferas):
+            cuadrica = gluNewQuadric()
+            glPushMatrix()
+            glColor3f(1,1,0)#definir color
+            glTranslatef(es_x,es_y,-0.9)
+            gluSphere(cuadrica, 0.1, 20, 20)#dibuja la esfera
+            gluDeleteQuadric(cuadrica)
+            glPopMatrix()
+
+            es_x+=0.3
+            es_y+=0.1
+
+        vi_x+=0.2
+        vi_y+=0.6
+    
+        es_x=vi_x
+        es_y=vi_y
+
+        nEsferas-=1
+
+    vi_z=-0.85
+    vi_y=-1
+
+    es_z=vi_z
+    es_y=vi_y
+
+    nEsferas=6
+    for i in range(4):
+        for j in range(nEsferas):
+            cuadrica = gluNewQuadric()
+            glPushMatrix()
+            glColor3f(0,1,1)#definir color
+            glTranslatef(1,es_y,es_z)
+            gluSphere(cuadrica, 0.1, 20, 20)#dibuja la esfera
+            gluDeleteQuadric(cuadrica)
+            glPopMatrix()
+
+            es_z+=0.3
+            es_y+=0.1
+
+        vi_z+=0.2
+        vi_y+=0.6
+    
+        es_z=vi_z
+        es_y=vi_y
+
+        nEsferas-=1
+        
+    vi_z=-0.85
+    vi_y=-1
+
+    es_z=vi_z
+    es_y=vi_y
+
+    nEsferas=6
+    for i in range(4):
+        for j in range(nEsferas):
+            cuadrica = gluNewQuadric()
+            glPushMatrix()
+            glColor3f(1,0,1)#definir color
+            glTranslatef(-1,es_y,es_z)
+            gluSphere(cuadrica, 0.1, 20, 20)#dibuja la esfera
+            gluDeleteQuadric(cuadrica)
+            glPopMatrix()
+
+            es_z+=0.3
+            es_y+=0.1
+
+        vi_z+=0.2
+        vi_y+=0.6
+    
+        es_z=vi_z
+        es_y=vi_y
+
+        nEsferas-=1
+
     
 # Configuración inicial
 pygame.init()
