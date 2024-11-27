@@ -24,6 +24,44 @@ def configurarVista():
     glMatrixMode(GL_MODELVIEW)     # Cambia a la matriz de modelado
 configurarVista()
 
+# Número de copos de nieve
+NUM_copos = 400
+copos = []  
+
+# Inicializa los copos de nieve en posiciones aleatorias
+def initcopos():
+    global copos
+    copos = [
+        [random.uniform(-1, 1), random.uniform(0, 2)] for _ in range(NUM_copos)
+    ]
+
+# Dibuja un copo de nieve como un cuadrado
+def drawcopo(x, y):
+    size = 0.005  # Tamaño del copo 
+    glBegin(GL_QUADS)
+    glVertex2f(x - size, y - size)  
+    glVertex2f(x + size, y - size)  
+    glVertex2f(x + size, y + size)  
+    glVertex2f(x - size, y + size)  
+    glEnd()
+
+# Actualiza la posición de los copos de nieve
+def updatecopos():
+    global copos
+    for copo in copos:
+        copo[1] -= 0.01  # Los copos caen hacia abajo
+        if copo[1] < -1:  # Si un copo llega al fondo, reaparece arriba
+            copo[1] = 1
+            copo[0] = random.uniform(-1, 1)
+
+# Dibuja la escena completa
+def drawScene():
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+    glColor3f(1.0, 1.0, 1.0)  # Color blanco para los copos
+    for copo in copos:
+        drawcopo(copo[0], copo[1])
+    pygame.display.flip()
+
 
 # Variables de la cámara
 angulo_horizontal = 0.0
@@ -270,7 +308,7 @@ texturaTronco = cargar_textura('madera.PNG')
 
 # Variables de control
 running = True
-
+initcopos()
 # Bucle principal
 while running:
     for event in pygame.event.get():
@@ -284,9 +322,9 @@ while running:
     
     # Renderizado
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-
+    updatecopos()
     draw_pino(texturaHojas,texturaTronco)
-    
+    drawScene()
 
     pygame.display.flip()
     pygame.time.wait(10)
