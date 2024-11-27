@@ -1,9 +1,232 @@
+"""
+Se cierra con la letra p
+
+la camara se maneja con w, a, s, d
+"""
+
 import pygame
 from pygame.locals import *
 from OpenGL.GL import *
 from OpenGL.GLU import *
+from OpenGL.GLUT import *
 import random
+import math
 
+#const de colores
+cwall = (0.8,0.9,0.6)
+cfloor = (0.1,0.4,0.4)
+ct = (0.1,0.1,0.1)
+cm = (0.2,0.1,0.1)
+
+
+# Configuración inicial
+# Inicializar Pygame y OpenGL
+pygame.init()
+#glutInit()
+pygame.display.set_mode((800, 800), DOUBLEBUF | OPENGL | NOFRAME)
+gluPerspective(45, (800 / 800), 0.1, 70.0)  # Proyección en perspectiva
+glTranslatef(0.0, 0.0, -7)
+pygame.display.set_caption("Proyecto Final, Escena navidenia")
+
+
+# codigo para la camara y configuracion de la vista
+def configurarVista():
+    glMatrixMode(GL_PROJECTION)    # Cambia a la matriz de proyección
+    glLoadIdentity()               # Resetea la matriz
+    gluPerspective(45,(800/800),0.1,70.0)
+    glMatrixMode(GL_MODELVIEW)     # Cambia a la matriz de modelado
+configurarVista()
+
+
+# Variables de la cámara
+angulo_horizontal = 0.0
+angulo_vertical = 0.0  
+#distancia al origen (radio de la orbita)
+radio = 5.0  
+# velocidad de rotación
+speed = 2.0  
+# velocidad de zoom con E y Q
+zoom_speed = 0.2  
+
+def manejarInput():
+    """controla la rotación y el zoom segun la entrada del usuario."""
+    global angulo_horizontal, angulo_vertical, radio
+
+    keys = pygame.key.get_pressed()
+
+    #rotación horizontal con A/D
+    if keys[K_a]:
+        angulo_horizontal -= speed
+    if keys[K_d]:
+        angulo_horizontal += speed
+
+    #rotacion vertical con W/S (limitada entre -89 y 89 grados)
+    if keys[K_w] and angulo_vertical < 89:
+        angulo_vertical += speed
+    if keys[K_s] and angulo_vertical > -89:
+        angulo_vertical -= speed
+
+    #zoom in/out con E/Q
+    if keys[K_e] and radio > 2:  #limitar el acercamiento mínimo
+        radio -= zoom_speed
+    if keys[K_q] and radio < 50:  #limitar el alejamiento máximo
+        radio += zoom_speed
+
+def actualizarCamara():
+    """Actualiza la posición de la camara usando coordenadas esfericas."""
+    angulo_h_rad = math.radians(angulo_horizontal)
+    angulo_v_rad = math.radians(angulo_vertical)
+
+    #coordenadas esfericas
+    cam_x = radio * math.cos(angulo_v_rad) * math.sin(angulo_h_rad)
+    cam_y = radio * math.sin(angulo_v_rad)
+    cam_z = radio * math.cos(angulo_v_rad) * math.cos(angulo_h_rad)
+
+    #configurar la vista con gluLookAt
+    glLoadIdentity()
+    gluLookAt(cam_x, cam_y, cam_z, 0, 0, 0, 0, 1, 0)
+
+glEnable(GL_DEPTH_TEST)
+
+# codigo para dibujar un cubo
+# recibe como parametros 6 colores, width, height y deep
+def cubo(cf,cr,cb,cd,ci,cu, w, h, d):
+    glBegin(GL_QUADS)
+    #f  gray
+    glColor3f(*cf)
+    glVertex3f(-w,-h,d) #dl
+    glVertex3f(w,-h,d)  #dr
+    glVertex3f(w,h,d)   #ur
+    glVertex3f(-w,h,d)  #ul
+    #r    purple
+    glColor3f(*cr)
+    glVertex3f(w,-h,d)
+    glVertex3f(w,-h,-d)
+    glVertex3f(w,h,-d)
+    glVertex3f(w,h,d)
+    #b blue
+    glColor3f(*cb)
+    glVertex3f(w,-h,-d)
+    glVertex3f(-w,-h,-d)
+    glVertex3f(-w,h,-d)
+    glVertex3f(w,h,-d)
+    #d  pink
+    glColor3f(*cd)
+    glVertex3f(-w,-h,-d)
+    glVertex3f(w,-h,-d)
+    glVertex3f(w,-h,d)
+    glVertex3f(-w,-h,d)
+    #l  yellow
+    glColor3f(*ci)
+    glVertex3f(-w,-h,-d)
+    glVertex3f(-w,-h,d)
+    glVertex3f(-w,h,d)
+    glVertex3f(-w,h,-d)
+    #u  green
+    glColor3f(*cu)
+    glVertex3f(w,h,-d)
+    glVertex3f(-w,h,-d)
+    glVertex3f(-w,h,d)
+    glVertex3f(w,h,d)
+    glEnd()
+
+    # Dibujar las líneas de contorno del cubo
+    glColor3f(0, 0, 0)  # Negro para el contorno
+    glBegin(GL_LINES)
+
+    # Aristas frontales
+    glVertex3f(-w, -h, d)
+    glVertex3f(w, -h, d)
+    
+    glVertex3f(w, -h, d)
+    glVertex3f(w, h, d)
+    
+    glVertex3f(w, h, d)
+    glVertex3f(-w, h, d)
+    
+    glVertex3f(-w, h, d)
+    glVertex3f(-w, -h, d)
+
+    # Aristas traseras
+    glVertex3f(-w, -h, -d)
+    glVertex3f(w, -h, -d)
+    
+    glVertex3f(w, -h, -d)
+    glVertex3f(w, h, -d)
+    
+    glVertex3f(w, h, -d)
+    glVertex3f(-w, h, -d)
+    
+    glVertex3f(-w, h, -d)
+    glVertex3f(-w, -h, -d)
+
+    # Conexiones entre frontal y trasera
+    glVertex3f(-w, -h, d)
+    glVertex3f(-w, -h, -d)
+    
+    glVertex3f(w, -h, d)
+    glVertex3f(w, -h, -d)
+    
+    glVertex3f(w, h, d)
+    glVertex3f(w, h, -d)
+    
+    glVertex3f(-w, h, d)
+    glVertex3f(-w, h, -d)
+
+    glEnd()
+# aca se dibuja la casita y otras cosas
+def dibujarCasita():
+
+    #pared izquierda
+    glPushMatrix()
+    glTranslatef(-8,-1,0)
+    cubo(cwall,cwall,cwall,cwall,cwall,cwall,0.4,1.5,6)
+    glPopMatrix()
+    glPushMatrix()
+    glTranslatef(-8,3.2,3)
+    cubo(cwall,cwall,cwall,cwall,cwall,cwall,0.4,2.8,3)
+    glPopMatrix()
+    glPushMatrix()
+    glTranslatef(-8,3.2,-5)
+    cubo(cwall,cwall,cwall,cwall,cwall,cwall,0.4,2.8,1)
+    glPopMatrix()
+    
+    glPushMatrix()
+    glTranslatef(-8,5.6,-2)
+    cubo(cwall,cwall,cwall,cwall,cwall,cwall,0.4,0.4,2)
+    glPopMatrix()
+    
+    
+    #pared back
+    glPushMatrix()
+    glTranslatef(0,2,-6)
+    cubo(cwall,cwall,cwall,cwall,cwall,cwall,8,4,0.4)
+    glPopMatrix()
+    #right wall
+
+    glPushMatrix()
+    glTranslatef(8,2,0)
+    cubo(cwall,cwall,cwall,cwall,cwall,cwall,0.4,4,6)
+    glPopMatrix()
+    
+    #front wall
+    glPushMatrix()
+    glTranslatef(0,2,6)
+    cubo(cwall,cwall,cwall,cwall,cwall,cwall,8,4,0.4)
+    glPopMatrix()
+    # floor
+    glPushMatrix()
+    glTranslatef(0,-2,0)
+    cubo(cfloor,cfloor,cfloor,cfloor,cfloor,cfloor,8,0.4,6)
+    glPopMatrix()
+
+    #techo
+    glPushMatrix()
+    glTranslatef(0,6,0)
+    cubo(ct,ct,ct,ct,ct,ct,8,0.4,6)
+    glPopMatrix()
+
+    
 #Pueden usar este metodo para cargar las texturas que quieran (llaman al metodo antes del ciclo principal)
 def cargar_textura(ruta):
     # Carga la imagen de la textura
@@ -176,20 +399,24 @@ def draw_pino(textura1,textura2):
         nEsferas-=1
 
     
-# Configuración inicial
-pygame.init()
-screen = pygame.display.set_mode((800, 600), DOUBLEBUF | OPENGL)
-pygame.display.set_caption("Proyecto Final, Escena navidenia")
+
 
 # Configuración de OpenGL
+
+""" 
+ # esto lo tuve que cambiar
 glEnable(GL_DEPTH_TEST)
 glClearColor(0.1, 0.1, 0.1, 1)
 gluPerspective(45, (800 / 600), 0.1, 50.0)
 glTranslatef(0.0, 0.0, -5)
-
+glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+"""
 #Aqui ponen la textura
 texturaHojas = cargar_textura('hojas.jpg')
 texturaTronco = cargar_textura('madera.PNG')
+
+
+
 
 # Variables de control
 running = True
@@ -199,12 +426,17 @@ while running:
     for event in pygame.event.get():
         if event.type == QUIT:
             running = False
+        elif event.type == KEYDOWN and event.key == K_p:
+            running = False
 
+    manejarInput()
+    actualizarCamara()
+    
     # Renderizado
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
     draw_pino(texturaHojas,texturaTronco)
-    
+    dibujarCasita()
 
     pygame.display.flip()
     pygame.time.wait(10)
