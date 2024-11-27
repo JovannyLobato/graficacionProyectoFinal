@@ -186,10 +186,14 @@ glEnable(GL_DEPTH_TEST)
 glClearColor(0.1, 0.1, 0.1, 1)
 gluPerspective(45, (800 / 600), 0.1, 50.0)
 glTranslatef(0.0, 0.0, -5)
+glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
 #Aqui ponen la textura
 texturaHojas = cargar_textura('hojas.jpg')
 texturaTronco = cargar_textura('madera.PNG')
+
+
+
 
 # Variables de control
 running = True
