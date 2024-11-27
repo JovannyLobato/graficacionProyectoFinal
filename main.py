@@ -4,6 +4,7 @@ Se cierra con la letra p
 la camara se maneja con w, a, s, d
 """
 
+from cube import *
 import pygame
 from pygame.locals import *
 from OpenGL.GL import *
@@ -17,7 +18,6 @@ cwall = (0.8,0.9,0.6)
 cfloor = (0.1,0.4,0.4)
 ct = (0.1,0.1,0.1)
 cm = (0.2,0.1,0.1)
-
 
 # Configuración inicial
 # Inicializar Pygame y OpenGL
@@ -42,7 +42,7 @@ configurarVista()
 angulo_horizontal = 0.0
 angulo_vertical = 0.0  
 #distancia al origen (radio de la orbita)
-radio = 5.0  
+radio = 10.0  
 # velocidad de rotación
 speed = 2.0  
 # velocidad de zoom con E y Q
@@ -226,7 +226,7 @@ def dibujarCasita():
     cubo(ct,ct,ct,ct,ct,ct,8,0.4,6)
     glPopMatrix()
 
-    
+
 #Pueden usar este metodo para cargar las texturas que quieran (llaman al metodo antes del ciclo principal)
 def cargar_textura(ruta):
     # Carga la imagen de la textura
@@ -278,7 +278,7 @@ def draw_pino(textura1,textura2):
     
     glPushMatrix()
     glColor3f(0.5,0.25,0)
-    glTranslatef(0,-1.75,0)
+    glTranslatef(0,-1.6,0)
     glRotatef(90,-1,0,0)
     glScalef(0.35,0.5,0.5)
     gluCylinder(quadric, 1.0, 1.0, 2.0, 50, 10)
@@ -414,7 +414,10 @@ glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 #Aqui ponen la textura
 texturaHojas = cargar_textura('hojas.jpg')
 texturaTronco = cargar_textura('madera.PNG')
-
+mesh = Cube(GL_POLYGON, "regalo1.jpg")
+mesh1 = Cube(GL_POLYGON, "regalo2.jpg")
+mesh2 = Cube(GL_POLYGON, "regalo3.jpg")
+mesh3 = Cube(GL_POLYGON, "regalo4.jpg")
 
 
 
@@ -436,6 +439,32 @@ while running:
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
     draw_pino(texturaHojas,texturaTronco)
+    
+    glPushMatrix()
+    glTranslatef(-1,-1.3,1)
+    glScalef(0.7,0.7,0.7)
+    glScalef
+    mesh.draw()
+    glPopMatrix()
+
+    glPushMatrix()
+    glTranslatef(1,-1.3,1)
+    glScalef(0.7,0.7,0.7)
+    mesh1.draw()
+    glPopMatrix()
+
+    glPushMatrix()
+    glTranslatef(-1,-1.3,-1)
+    glScalef(0.7,0.7,0.7)
+    mesh2.draw()
+    glPopMatrix()
+
+    glPushMatrix()
+    glTranslatef(1,-1.3,-1)
+    glScalef(0.7,0.7,0.7)
+    mesh3.draw()
+    glPopMatrix()
+
     dibujarCasita()
 
     pygame.display.flip()
