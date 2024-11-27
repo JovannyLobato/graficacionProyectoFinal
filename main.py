@@ -6,6 +6,8 @@ from OpenGL.GLUT import *
 import random
 import math
 
+#const de colores
+cwall = (0.8,0.9,0.6)
 # Configuración inicial
 # Inicializar Pygame y OpenGL
 pygame.init()
@@ -75,7 +77,100 @@ def actualizarCamara():
 
 glEnable(GL_DEPTH_TEST)
 
+# codigo para dibujar un cubo
+# recibe como parametros 6 colores, width, height y deep
+def cubo(cf,cr,cb,cd,ci,cu, w, h, d):
+    glBegin(GL_QUADS)
+    #f  gray
+    glColor3f(*cf)
+    glVertex3f(-w,-h,d) #dl
+    glVertex3f(w,-h,d)  #dr
+    glVertex3f(w,h,d)   #ur
+    glVertex3f(-w,h,d)  #ul
+    #r    purple
+    glColor3f(*cr)
+    glVertex3f(w,-h,d)
+    glVertex3f(w,-h,-d)
+    glVertex3f(w,h,-d)
+    glVertex3f(w,h,d)
+    #b blue
+    glColor3f(*cb)
+    glVertex3f(w,-h,-d)
+    glVertex3f(-w,-h,-d)
+    glVertex3f(-w,h,-d)
+    glVertex3f(w,h,-d)
+    #d  pink
+    glColor3f(*cd)
+    glVertex3f(-w,-h,-d)
+    glVertex3f(w,-h,-d)
+    glVertex3f(w,-h,d)
+    glVertex3f(-w,-h,d)
+    #l  yellow
+    glColor3f(*ci)
+    glVertex3f(-w,-h,-d)
+    glVertex3f(-w,-h,d)
+    glVertex3f(-w,h,d)
+    glVertex3f(-w,h,-d)
+    #u  green
+    glColor3f(*cu)
+    glVertex3f(w,h,-d)
+    glVertex3f(-w,h,-d)
+    glVertex3f(-w,h,d)
+    glVertex3f(w,h,d)
+    glEnd()
 
+    # Dibujar las líneas de contorno del cubo
+    glColor3f(0, 0, 0)  # Negro para el contorno
+    glBegin(GL_LINES)
+
+    # Aristas frontales
+    glVertex3f(-w, -h, d)
+    glVertex3f(w, -h, d)
+    
+    glVertex3f(w, -h, d)
+    glVertex3f(w, h, d)
+    
+    glVertex3f(w, h, d)
+    glVertex3f(-w, h, d)
+    
+    glVertex3f(-w, h, d)
+    glVertex3f(-w, -h, d)
+
+    # Aristas traseras
+    glVertex3f(-w, -h, -d)
+    glVertex3f(w, -h, -d)
+    
+    glVertex3f(w, -h, -d)
+    glVertex3f(w, h, -d)
+    
+    glVertex3f(w, h, -d)
+    glVertex3f(-w, h, -d)
+    
+    glVertex3f(-w, h, -d)
+    glVertex3f(-w, -h, -d)
+
+    # Conexiones entre frontal y trasera
+    glVertex3f(-w, -h, d)
+    glVertex3f(-w, -h, -d)
+    
+    glVertex3f(w, -h, d)
+    glVertex3f(w, -h, -d)
+    
+    glVertex3f(w, h, d)
+    glVertex3f(w, h, -d)
+    
+    glVertex3f(-w, h, d)
+    glVertex3f(-w, h, -d)
+
+    glEnd()
+# aca se dibuja la casita y otras cosas
+def dibujarCasita():
+
+    glPushMatrix()
+    glTranslatef(-3,1,0)
+    cubo(cwall,cwall,cwall,cwall,cwall,cwall,
+        0.4,4,4)
+    glPopMatrix()
 
 #Pueden usar este metodo para cargar las texturas que quieran (llaman al metodo antes del ciclo principal)
 def cargar_textura(ruta):
@@ -286,7 +381,7 @@ while running:
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
     draw_pino(texturaHojas,texturaTronco)
-    
+    dibujarCasita()
 
     pygame.display.flip()
     pygame.time.wait(10)
