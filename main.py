@@ -2,7 +2,80 @@ import pygame
 from pygame.locals import *
 from OpenGL.GL import *
 from OpenGL.GLU import *
+from OpenGL.GLUT import *
 import random
+import math
+
+# Configuración inicial
+# Inicializar Pygame y OpenGL
+pygame.init()
+glutInit()
+pygame.display.set_mode((800, 800), DOUBLEBUF | OPENGL | NOFRAME)
+gluPerspective(45, (800 / 800), 0.1, 70.0)  # Proyección en perspectiva
+glTranslatef(0.0, 0.0, -7)
+pygame.display.set_caption("Proyecto Final, Escena navidenia")
+
+
+# codigo para la camara y configuracion de la vista
+def configurarVista():
+    glMatrixMode(GL_PROJECTION)    # Cambia a la matriz de proyección
+    glLoadIdentity()               # Resetea la matriz
+    gluPerspective(45,(800/800),0.1,70.0)
+    glMatrixMode(GL_MODELVIEW)     # Cambia a la matriz de modelado
+configurarVista()
+
+
+# Variables de la cámara
+angulo_horizontal = 0.0
+angulo_vertical = 0.0  
+#distancia al origen (radio de la orbita)
+radio = 10.0  
+# velocidad de rotación
+speed = 2.0  
+# velocidad de zoom con E y Q
+zoom_speed = 0.2  
+
+def manejarInput():
+    """controla la rotación y el zoom segun la entrada del usuario."""
+    global angulo_horizontal, angulo_vertical, radio
+
+    keys = pygame.key.get_pressed()
+
+    #rotación horizontal con A/D
+    if keys[K_a]:
+        angulo_horizontal -= speed
+    if keys[K_d]:
+        angulo_horizontal += speed
+
+    #rotacion vertical con W/S (limitada entre -89 y 89 grados)
+    if keys[K_w] and angulo_vertical < 89:
+        angulo_vertical += speed
+    if keys[K_s] and angulo_vertical > -89:
+        angulo_vertical -= speed
+
+    #zoom in/out con E/Q
+    if keys[K_e] and radio > 2:  #limitar el acercamiento mínimo
+        radio -= zoom_speed
+    if keys[K_q] and radio < 50:  #limitar el alejamiento máximo
+        radio += zoom_speed
+
+def actualizarCamara():
+    """Actualiza la posición de la camara usando coordenadas esfericas."""
+    angulo_h_rad = math.radians(angulo_horizontal)
+    angulo_v_rad = math.radians(angulo_vertical)
+
+    #coordenadas esfericas
+    cam_x = radio * math.cos(angulo_v_rad) * math.sin(angulo_h_rad)
+    cam_y = radio * math.sin(angulo_v_rad)
+    cam_z = radio * math.cos(angulo_v_rad) * math.cos(angulo_h_rad)
+
+    #configurar la vista con gluLookAt
+    glLoadIdentity()
+    gluLookAt(cam_x, cam_y, cam_z, 0, 0, 0, 0, 1, 0)
+
+glEnable(GL_DEPTH_TEST)
+
+
 
 #Pueden usar este metodo para cargar las texturas que quieran (llaman al metodo antes del ciclo principal)
 def cargar_textura(ruta):
@@ -176,18 +249,18 @@ def draw_pino(textura1,textura2):
         nEsferas-=1
 
     
-# Configuración inicial
-pygame.init()
-screen = pygame.display.set_mode((800, 600), DOUBLEBUF | OPENGL)
-pygame.display.set_caption("Proyecto Final, Escena navidenia")
+
 
 # Configuración de OpenGL
+
+""" 
+ # esto lo tuve que cambiar
 glEnable(GL_DEPTH_TEST)
 glClearColor(0.1, 0.1, 0.1, 1)
 gluPerspective(45, (800 / 600), 0.1, 50.0)
 glTranslatef(0.0, 0.0, -5)
 glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
-
+"""
 #Aqui ponen la textura
 texturaHojas = cargar_textura('hojas.jpg')
 texturaTronco = cargar_textura('madera.PNG')
@@ -203,7 +276,12 @@ while running:
     for event in pygame.event.get():
         if event.type == QUIT:
             running = False
+        elif event.type == KEYDOWN and event.key == K_p:
+            running = False
 
+    manejarInput()
+    actualizarCamara()
+    
     # Renderizado
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
